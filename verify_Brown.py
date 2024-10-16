@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from DPLL_Brown import main as dpll, prettify_expression
-import random 
 from DumbSAT_Brown import dumb_sat
+import random 
 import matplotlib.pyplot as plt #type: ignore -> ignore the error that says it can't find the module
 import pandas as pd
 from tqdm import tqdm
@@ -19,7 +19,7 @@ def build_wff(Nvars,Nclauses,LitsPerClause):
 
 def read_input():
     ''' generator that returns a list of clauses from the input file.'''
-    with open('2SAT.cnf.csv', 'r') as f:
+    with open('data_Brown.csv', 'r') as f:
         for line in f:
             line = line.strip()
             if line.startswith('c') or not line: continue
@@ -121,7 +121,7 @@ def main():
     unsat_count = 0
     output_lines = []
     
-    with open('trace.txt', 'w') as output_file:
+    with open('trace_Brown.txt', 'w') as output_file:
         for expression, n_vars, n_clauses in tqdm(read_input(), total=100, desc='Processing WFFs', colour='green'): 
                         
             num_literals = sum(len(clause) for clause in expression)
@@ -174,7 +174,7 @@ def main():
         output_lines.insert(5, "No mismatching results found... SUCCESS! ")    
     output_lines.insert(6, '-'*45)
     
-    with open('output.txt', 'w') as output_file:
+    with open('log_Brown.txt', 'w') as output_file:
         for line in output_lines:
             output_file.write(line + '\n')
             

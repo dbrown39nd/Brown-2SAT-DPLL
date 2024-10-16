@@ -6,7 +6,7 @@ from copy import deepcopy
             
 def DPLL(expression: list[list], assignment={}, all_vars=None) -> tuple[bool, dict]:
     ''' Go through each clause in the expression '''
-    # Initialize the assignment dictionary
+    # Initialize the assignment dictionary, sometimes wffs in provided data do not have all variables, so need to add later. Ie. it skips 15. when you have x1-x16
     if all_vars is None:
         all_vars = {abs(lit) for clause in expression for lit in clause}
         assignment = {var: None for var in all_vars}
@@ -21,9 +21,10 @@ def DPLL(expression: list[list], assignment={}, all_vars=None) -> tuple[bool, di
         return False, {} 
     
     # Need to do unit propagation! ( Clauses with just one literal. They must be true for the statement to be true. )
-    new_expression = deepcopy(expression)
-    new_assignment = assignment.copy()
-    unit_clauses = [clause for clause in new_expression if len(clause) == 1] # get a list of all unit clauses
+    new_expression = deepcopy(expression) # Make a copy of the expression so we don't modify the original
+    new_assignment = assignment.copy() # Make a copy of the assignment so we don't modify the original
+    # Perform unit propagation
+    unit_clauses = [clause for clause in new_expression if len(clause) == 1] # get a list of all unit clauses in current expression
     while unit_clauses:
         literal = unit_clauses[0][0]
         var = abs(literal)
@@ -64,7 +65,7 @@ def simplify(expression: list[list], literal: int) -> list[list]:
     '''
     simplified_expression = []
     for clause in expression:
-        if literal in clause:
+        if literal in clause: #If literal in the clause, we know this clause is satisfied, and we can continue. Only add clause if literal is not in it, so we know its not satisfied by literal
             continue
         new_clause = [lit for lit in clause if lit != -literal]
         simplified_expression.append(new_clause)
@@ -73,6 +74,7 @@ def simplify(expression: list[list], literal: int) -> list[list]:
             
 
 def prettify_expression(expression: list[list]) -> None:
+    ''' This function takes an expression and returns a string representation of it in the format (x1 v ~x2) & (x3 v x4) & (~x5 v x6) '''
     clauses = []
     for clause in expression:
         formatted_clause = []
@@ -87,9 +89,10 @@ def prettify_expression(expression: list[list]) -> None:
         clauses.append(clause_str)
     return(' & '.join(clauses))
 def complete_assignment(assignment):
+    ''' This function completes the assignment dictionary by adding False to any variable that is not in the dictionary. Sometimes the DPLL algorithm determines a literal does not matter and does not add it to the assignment dictionary. 
+    This function ensures that all variables are in the dictionary. '''
     if not assignment:
         return {}
-    ''' This function completes the assignment dictionary by adding False to any variable that is not in the dictionary '''
     max_var = max(assignment.keys())
     for i in range(1, max_var + 1):
         if i not in assignment:
