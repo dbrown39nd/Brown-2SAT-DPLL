@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-from dpll import main as dpll, prettify_expression
+from DPLL_Brown import main as dpll, prettify_expression
 import random 
-from DumbSAT import dumb_sat
+from DumbSAT_Brown import dumb_sat
 import matplotlib.pyplot as plt #type: ignore -> ignore the error that says it can't find the module
 import pandas as pd
 from tqdm import tqdm
